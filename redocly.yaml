@@ -1,0 +1,6 @@
+# Config for `npx @redocly/cli lint docs/api/openapi.yaml`
+extends:
+  - recommended
+rules:
+  info-license: off
+  no-server-example.com: off   # we list localhost as a server on purpose
