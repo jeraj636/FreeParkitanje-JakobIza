@@ -4,29 +4,41 @@ Replace the example with your own model. Requirements: at least 3 entities, one 
 
 ```mermaid
 erDiagram
-    USER ||--o{ ORDER : places
-    ORDER ||--|{ ORDER_ITEM : contains
-    PRODUCT ||--o{ ORDER_ITEM : "appears in"
+    USER ||--o{ USER_AVTO : owns
+    AVTO ||--o{ USER_AVTO : assigned_to
+    USER ||--o{ REZERVACIJA : makes
+    AVTO ||--o{ REZERVACIJA : uses
+    PARKING ||--o{ REZERVACIJA : reserved_for
 
     USER {
         int id PK
         string email UK
         string role
     }
-    ORDER {
-        int id PK
-        int userId FK
-        datetime createdAt
+
+    USER_AVTO {
+        int userID PK, FK
+        int avtoID PK, FK
     }
-    ORDER_ITEM {
-        int orderId PK, FK
-        int productId PK, FK
-        int quantity
-    }
-    PRODUCT {
+
+    AVTO {
         int id PK
-        string name
-        decimal price
+        string registrska UK
+    }
+
+    REZERVACIJA {
+        int id PK
+        datetime zac
+        datetime kon
+        int parkingID FK
+        int uporabnikID FK
+        int avtoID FK
+    }
+
+    PARKING {
+        int id PK
+        int x
+        int y
     }
 ```
 
