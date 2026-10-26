@@ -14,6 +14,7 @@ erDiagram
         int id PK
         string email UK
         string role
+        string geslo 
     }
 
     USER_AVTO {
@@ -46,7 +47,10 @@ erDiagram
 
 | Entity | Description | Important rules / constraints |
 |--------|-------------|-------------------------------|
-| | | |
-
+| USER| tablea uporabniških računov |  | 
+| USER_AVTO| tabla hi pove kateri uporabnik si lasti kateri avto||
+|AVTO| tabela avtov, ki jih imajo upoabniki||
+|REZARVACIJA|tabela ki hrani podatke o rezervaciji parkinga||
+|PARKING| tabela z podtki o vseg parkingih|
 ## Business rules
-<!-- e.g. "A room cannot have two bookings that overlap in time." -->
+Tako kot je v diagramu
