@@ -24,14 +24,7 @@
 
 See [docs/architecture.md](docs/architecture.md).
 
-```mermaid
-flowchart LR
-    Web[Web app] --> API
-    Mobile[Mobile app] --> API
-    Agent[AI agent] --> API
-    API --> DB[(Database)]
-    API --> LLM[LLM provider]
-```
+![Arhitektura sistema](docs/assets/diagramTehnologij.drawio.svg)
 
 ## Stack
 
