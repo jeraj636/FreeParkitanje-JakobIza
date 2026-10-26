@@ -2,29 +2,7 @@
 
 ## Components
 
-```mermaid
-flowchart LR
-    subgraph Clients
-        Web[Web app]
-        Mobile[Mobile app]
-        AgentUI[Agent chat / MCP client]
-    end
-    subgraph Cloud
-        API[REST API]
-        Agent[Agent]
-        DB[(Managed database)]
-    end
-    LLM[LLM provider]
-
-    Web -->|HTTPS| API
-    Mobile -->|HTTPS + bearer token| API
-    AgentUI --> Agent
-    Agent -->|tools, user's token| API
-    Agent --> LLM
-    API --> DB
-    API --> LLM
-```
-
+![Arhitektura sistema](assets/diagramTehnologij.drawio.svg)
 Update this diagram as the system evolves.
 
 ## Layers (backend)
