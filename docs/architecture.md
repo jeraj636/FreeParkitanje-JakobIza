@@ -2,7 +2,7 @@
 
 ## Components
 
-
+```mermaid
 flowchart LR
     subgraph Clients["Odjemalci"]
         Web["Web app<br/>TypeScript + DaisyUI"]
@@ -19,7 +19,7 @@ flowchart LR
     Mobile -->|HTTPS| API
     API --> DB
     API --> AI
-
+```
 
 ## Layers (backend)
 <!-- Presentation → business logic → data access. Name the main projects/modules. -->
