@@ -2,8 +2,24 @@
 
 ## Components
 
-![Arhitektura sistema](assets/diagramTehnologij.drawio.svg)
-Update this diagram as the system evolves.
+
+flowchart LR
+    subgraph Clients["Odjemalci"]
+        Web["Web app<br/>TypeScript + DaisyUI"]
+        Mobile["Mobilna aplikacija"]
+    end
+
+    subgraph Backend["Strežnik"]
+        API["API<br/>PHP"]
+        DB[("MariaDB")]
+        AI["AI<br/>Claude"]
+    end
+
+    Web -->|HTTPS| API
+    Mobile -->|HTTPS| API
+    API --> DB
+    API --> AI
+
 
 ## Layers (backend)
 <!-- Presentation → business logic → data access. Name the main projects/modules. -->
