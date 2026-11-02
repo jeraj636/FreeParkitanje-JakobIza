@@ -81,8 +81,7 @@ Describe which environment variables / user secrets are needed and how to set th
 
 ### Mobile app
 
-How to build and run it, and how to point it to a local or production API.
-
+Mobilna aplikacija bi bila uporabna, ker uporabniki pogosto iščejo parkirno mesto med vožnjo ali tik pred prihodom na cilj. Omogočala bi hitro iskanje prostih parkirnih mest v bližini trenutne lokacije ali izbrane destinacije, pregled njihove razpoložljivosti in cen ter rezervacijo parkirnega mesta neposredno prek telefona. Uporabniki bi lahko dostopali do svojih rezervacij, prejemali obvestila o potrditvah in spremembah ter lažje našli rezervirano parkirno mesto s pomočjo zemljevida in navigacije. Mobilna aplikacija bi tako izboljšala dostopnost sistema, poenostavila postopek rezervacije in uporabnikom prihranila čas pri iskanju parkirišča.
 ## Documentation
 
 | Document                                       | Content                       |
