@@ -6,8 +6,8 @@
 
 | Name     | GitHub    | Main responsibilities |
 | -------- | --------- | --------------------- |
-| Avtorica | @ilavtar  | …                     |
-| Avtor    | @jeraj636 | …                     |
+| Avtorica | @ilavtar  | frontend                     |
+| Avtor    | @jeraj636 | backend                    |
 
 <!-- Lab repository: one row. Project repository: both team members. -->
 
