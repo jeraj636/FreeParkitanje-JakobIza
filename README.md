@@ -23,9 +23,26 @@
 ## Architecture
 
 See [docs/architecture.md](docs/architecture.md).
+```mermaid
 
-![Arhitektura sistema](docs/assets/diagramTehnologij.drawio.svg)
+flowchart LR
+    subgraph Clients["Odjemalci"]
+        Web["Web app<br/>TypeScript + DaisyUI"]
+        Mobile["Mobilna aplikacija"]
+    end
 
+    subgraph Backend["Strežnik"]
+        API["API<br/>PHP"]
+        DB[("MariaDB")]
+        AI["AI<br/>Claude"]
+    end
+
+    Web -->|HTTPS| API
+    Mobile -->|HTTPS| API
+    API --> DB
+    API --> AI
+
+```
 ## Stack
 
 | Part          | Technology |
