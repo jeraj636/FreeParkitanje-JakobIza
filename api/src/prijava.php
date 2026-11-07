@@ -1,4 +1,7 @@
 <?php
+namespace Prijava;
+use Exception;
+use Baza;
 class PrijavaException extends Exception
 {
 
