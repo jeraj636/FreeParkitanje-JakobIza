@@ -13,6 +13,7 @@ if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 } else {
     $origin = $_SERVER['REMOTE_ADDR'];
 }
+
 /*
 $dovoljeneDomene = explode(' ', getenv("DOVOLJENE_SPLETNE_STRANI"));
 if (in_array($origin, $dovoljeneDomene, true)) {
@@ -43,5 +44,5 @@ $zahteva = explode("/", trim($pot, "/"));
 $vir = $zahteva[0] ?? null;
 $id = $zahteva[1] ?? null;
 
-require_once "src/upravitelj.php";
+require_once __DIR__ . "/src/upravitelj.php";
 obdelajZahtevo($metoda, $vir, $id);
