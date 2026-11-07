@@ -1,0 +1,69 @@
+name: Deploy FreeParkiranje
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: web
+        run: npm run build
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Configure SSH
+        env:
+          KNOWN_HOSTS: ${{ secrets.SERVER_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy frontend
+        run: |
+          rsync -az --delete \
+            --exclude='config.json' \
+            -e "ssh -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=yes" \
+            web/dist/ \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/html/fp/web/
+
+      - name: Deploy backend
+        run: |
+          rsync -az \
+            --exclude='.env' \
+            --exclude='data/' \
+            --exclude='vendor/' \
+            -e "ssh -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=yes" \
+            api/ \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/html/fp/api/
+
+      - name: Install PHP dependencies
+        run: |
+          ssh -p "${{ secrets.SERVER_PORT }}" \
+            -o StrictHostKeyChecking=yes \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            "cd /var/www/html/kokosek/api && composer install --no-dev --optimize-autoloader"
