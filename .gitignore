@@ -6,6 +6,11 @@ appsettings.*.local.json
 secrets.json
 local.properties
 
+vendor/
+node_modules/
+dist/
+build/
+
 # OS / editor
 .DS_Store
 Thumbs.db
