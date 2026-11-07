@@ -1,0 +1,24 @@
+{
+  "name": "freeparkitanje-jakobiza",
+  "version": "1.0.0",
+  "description": "> Ena največjih frustracij slehernega študenta na FRI je parkiranje !!! Ta projekt temelji na resničnih problemih, katere tudi rešuje.",
+  "homepage": "https://github.com/jeraj636/FreeParkitanje-JakobIza#readme",
+  "bugs": {
+    "url": "https://github.com/jeraj636/FreeParkitanje-JakobIza/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeraj636/FreeParkitanje-JakobIza.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "npm --prefix web run dev",
+    "build": "npm --prefix web run build"
+  }
+}
