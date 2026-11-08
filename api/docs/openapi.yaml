@@ -1,16 +1,16 @@
-openapi: 3.1.0
-
+openapi: 3.0.3
 info:
-  title: FreeParkiranjeapi
-  version: "1.0"
-
+  title: freeparkiranje
+  description: API storitev za upravljanje in iskanje prostih parkirišč.
+  version: 1.0.0
+servers:
+  - url: https://api.freeparkiranje.si/v1
+    description: Produkcijski strežnik
 paths:
-  /prijava/:
+  /prijava:
     post:
-      tags:
-        - Prijava
       summary: Prijava uporabnika
-      description: Preveri uporabniško ime in geslo ter inicializira uporabniško sejo.
+      description: Preveri uporabniško ime in geslo, ustvari sejo ter vrne status prijave.
       requestBody:
         required: true
         content:
@@ -23,56 +23,26 @@ paths:
               properties:
                 upIme:
                   type: string
+                  description: Uporabniško ime
                 upGeslo:
                   type: string
-
+                  description: Uporabniško geslo
       responses:
         "200":
-          description: Odgovor strežnika
+          description: Uspešna prijava ali sporočilo o napaki
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  PHPSESSID:
-                    type: string
                   info:
                     type: string
-              examples:
-                uspešna_prijava:
-                  value:
-                    PHPSESSID: "session_id"
-                    info: "OK"
-                neobstoječ_uporabnik:
-                  value:
-                    PHPSESSID: "-1"
-                    info: "Uporabnik ne obstaja"
-                napačno_geslo:
-                  value:
-                    PHPSESSID: "-1"
-                    info: "Napacno Geslo"
-                napačna_metoda:
-                  value:
-                    PHPSESSID: "-1"
-                    info: "Napacna poizvedba uporabi POST"
-                manjkajoče_uporabniško_ime:
-                  value:
-                    PHPSESSID: "-1"
-                    info: "Napacna poizvedba specificiraj upIme"
-                manjkajoče_geslo:
-                  value:
-                    PHPSESSID: "-1"
-                    info: "Napacna poizvedba specificiraj upGeslo"
-                huda_napaka:
-                  value:
-                    PHPSESSID: "-1"
-                    info: "huda napaka"
-  /registracija/:
+                    example: "OK"
+
+  /registracija:
     post:
-      tags:
-        - Registracija
       summary: Registracija novega uporabnika
-      description: Preveri razpoložljivost uporabniškega imena in ustvari novega uporabnika.
+      description: Preveri, ali uporabniško ime obstaja, zashira geslo in shrani novega uporabnika v bazo.
       requestBody:
         required: true
         content:
@@ -85,12 +55,13 @@ paths:
               properties:
                 upIme:
                   type: string
+                  description: Želeno uporabniško ime
                 upGeslo:
                   type: string
-
+                  description: Uporabniško geslo
       responses:
         "200":
-          description: Odgovor strežnika
+          description: Uspešna registracija ali obvestilo, da je ime zasedeno
           content:
             application/json:
               schema:
@@ -98,19 +69,168 @@ paths:
                 properties:
                   info:
                     type: string
-              examples:
-                uspesna_registracija:
-                  value:
-                    info: "ok"
-                zasedeno_uporabnisko_ime:
-                  value:
-                    info: "uporabniško ime je že zasedeno"
-                napacna_metoda:
-                  value:
-                    info: "Napacna poizvedba uporabi POST"
-                manjkajoce_uporabnisko_ime:
-                  value:
-                    info: "Napacna poizvedba specificiraj upIme"
-                manjkajoce_geslo:
-                  value:
-                    info: "Napacna poizvedba specificiraj upGeslo"
+                    example: "ok"
+
+  /jaz:
+    post:
+      summary: Podatki o trenutnem uporabniku
+      description: Preveri veljavnost seje ter vrne podatke o prijavljenem uporabniku in njegovih registriranih avtomobilih.
+      responses:
+        "200":
+          description: Podatki o uporabniku ali obvestilo o potekli seji
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+                  role:
+                    type: string
+                    example: "u"
+                  ime:
+                    type: string
+                    example: "janez"
+                  avti:
+                    type: array
+                    items:
+                      type: string
+                    example: ["LJ123AB"]
+
+  /avto/{akcija}:
+    post:
+      summary: Upravljanje avtomobilov
+      description: Omogoča dodajanje ali brisanje (skenslaj) registrske tablice za prijavljenega uporabnika.
+      parameters:
+        - name: akcija
+          in: path
+          required: true
+          description: Izbira akcije (dodaj ali skenslaj)
+          schema:
+            type: string
+            enum:
+              - dodaj
+              - skenslaj
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - registrska
+              properties:
+                registrska:
+                  type: string
+                  description: Registrska tablica avtomobila
+      responses:
+        "200":
+          description: Uspešna izvedba ali obvestilo o napaki
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+
+  /rezervacija/{akcija}:
+    post:
+      summary: Upravljanje rezervacij
+      description: Omogoča dodajanje, brisanje in pregledovanje rezervacij (za uporabnike in administratorje).
+      parameters:
+        - name: akcija
+          in: path
+          required: true
+          description: Izbira akcije
+          schema:
+            type: string
+            enum:
+              - dodaj
+              - skenslaj
+              - prihodnje
+              - prihodnjeParkirPlac
+              - skenslajAdmin
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                zac:
+                  type: string
+                  format: date-time
+                  description: Začetek rezervacije
+                kon:
+                  type: string
+                  format: date-time
+                  description: Konec rezervacije
+                parkingID:
+                  type: integer
+                  description: ID parkirnega mesta
+                registrska:
+                  type: string
+                  description: Registrska tablica avtomobila
+                rezervacijaId:
+                  type: integer
+                  description: ID rezervacije (za brisanje)
+      responses:
+        "200":
+          description: Uspešna izvedba ali seznam rezervacij
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+                  rezervacije:
+                    type: array
+                    items:
+                      type: object
+
+  /prostost:
+    post:
+      summary: Iskanje prostih parkirišč
+      description: Vrne seznam ID-jev prostih parkirnih mest v izbranem časovnem obdobju.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - zac
+                - kon
+              properties:
+                zac:
+                  type: string
+                  format: date-time
+                  description: Začetek časovnega obdobja
+                kon:
+                  type: string
+                  format: date-time
+                  description: Konec časovnega obdobja
+      responses:
+        "200":
+          description: Seznam prostih parkirnih mest
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+                  parkirplaci:
+                    type: array
+                    items:
+                      type: integer
+                    example: [1, 3, 5]
+
+components:
+  schemas: {}
