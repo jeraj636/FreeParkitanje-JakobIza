@@ -1,0 +1,116 @@
+openapi: 3.1.0
+
+info:
+  title: FreeParkiranjeapi
+  version: "1.0"
+
+paths:
+  /prijava/:
+    post:
+      tags:
+        - Prijava
+      summary: Prijava uporabnika
+      description: Preveri uporabniško ime in geslo ter inicializira uporabniško sejo.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - upIme
+                - upGeslo
+              properties:
+                upIme:
+                  type: string
+                upGeslo:
+                  type: string
+
+      responses:
+        "200":
+          description: Odgovor strežnika
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  PHPSESSID:
+                    type: string
+                  info:
+                    type: string
+              examples:
+                uspešna_prijava:
+                  value:
+                    PHPSESSID: "session_id"
+                    info: "OK"
+                neobstoječ_uporabnik:
+                  value:
+                    PHPSESSID: "-1"
+                    info: "Uporabnik ne obstaja"
+                napačno_geslo:
+                  value:
+                    PHPSESSID: "-1"
+                    info: "Napacno Geslo"
+                napačna_metoda:
+                  value:
+                    PHPSESSID: "-1"
+                    info: "Napacna poizvedba uporabi POST"
+                manjkajoče_uporabniško_ime:
+                  value:
+                    PHPSESSID: "-1"
+                    info: "Napacna poizvedba specificiraj upIme"
+                manjkajoče_geslo:
+                  value:
+                    PHPSESSID: "-1"
+                    info: "Napacna poizvedba specificiraj upGeslo"
+                huda_napaka:
+                  value:
+                    PHPSESSID: "-1"
+                    info: "huda napaka"
+  /registracija/:
+    post:
+      tags:
+        - Registracija
+      summary: Registracija novega uporabnika
+      description: Preveri razpoložljivost uporabniškega imena in ustvari novega uporabnika.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - upIme
+                - upGeslo
+              properties:
+                upIme:
+                  type: string
+                upGeslo:
+                  type: string
+
+      responses:
+        "200":
+          description: Odgovor strežnika
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+              examples:
+                uspesna_registracija:
+                  value:
+                    info: "ok"
+                zasedeno_uporabnisko_ime:
+                  value:
+                    info: "uporabniško ime je že zasedeno"
+                napacna_metoda:
+                  value:
+                    info: "Napacna poizvedba uporabi POST"
+                manjkajoce_uporabnisko_ime:
+                  value:
+                    info: "Napacna poizvedba specificiraj upIme"
+                manjkajoce_geslo:
+                  value:
+                    info: "Napacna poizvedba specificiraj upGeslo"
