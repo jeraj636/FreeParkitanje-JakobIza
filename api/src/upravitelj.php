@@ -6,6 +6,7 @@ require_once __DIR__ . "/registracija.php";
 require_once __DIR__ . "/jaz.php";
 require_once __DIR__ . "/avto.php";
 require_once __DIR__ . "/rezervacija.php";
+require_once __DIR__ . "/parkirplaci.php";
 function obdelajZahtevo($metoda, $vir, $id)
 {
     Baza::init();
@@ -14,7 +15,8 @@ function obdelajZahtevo($metoda, $vir, $id)
         "registracija" => "Registracija\\registracija",
         "jaz" => "Jaz\\jaz",
         "avto" => "Avto\\avto",
-        "rezervacija" => "Rezervacija\\rezervacija"
+        "rezervacija" => "Rezervacija\\rezervacija",
+        "parkirplaci" => "Parkirplaci\\parkirplaci"
     ];
     if (isset($dovoljeneFunkcije[$vir])) {
         $dovoljeneFunkcije[$vir]($metoda, $id);

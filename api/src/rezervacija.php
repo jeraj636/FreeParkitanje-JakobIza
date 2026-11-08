@@ -104,7 +104,7 @@ function prihodnje($uporabnikID)
         }
         echo json_encode($out);
     } catch (Exception $_) {
-        echo json_encode(["info" => "Napaka pri pridobivanju rezervacij" . $_->getMessage()]);
+        echo json_encode(["info" => "Napaka pri pridobivanju rezervacij"]);
     }
 }
 function rezervacija($metoda, $akcija)
