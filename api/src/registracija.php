@@ -12,20 +12,21 @@ class HudaException extends Exception
 }
 function filtriraj($metoda)
 {
+    $ok = true;
     // Filtracija vhoda
     if ($metoda != "POST") {
         echo json_encode(["info" => "Napacna poizvedba uporabi POST"]);
-        return false;
+        $ok = false;
     }
     if (!isset($_POST["upIme"])) {
         echo json_encode(["info" => "Napacna poizvedba specificiraj upIme"]);
-        return false;
+        $ok = false;
     }
     if (!isset($_POST["upGeslo"])) {
         echo json_encode(["info" => "Napacna poizvedba specificiraj upGeslo"]);
-        return false;
+        $ok = false;
     }
-    return true;
+    return $ok;
 }
 function aliSmem($upIme)
 {
