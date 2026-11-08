@@ -2,7 +2,6 @@
 namespace Parkirplaci;
 use Exception;
 use Baza;
-require_once __DIR__ . "/seje.php";
 function parkirplaci()
 {
     try {
