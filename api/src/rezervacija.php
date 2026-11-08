@@ -11,7 +11,7 @@ function filtriraj($metoda, $akcija, $zac, $kon, $parkingID, $registrska, $rezer
         echo json_encode(["info" => "Napacna poizvedba uporabi POST"]);
         $ok = false;
     }
-    if (!isset($akcija) || !in_array($akcija, ["dodaj", "skenslaj", "prihodnje"])) {
+    if (!isset($akcija) || !in_array($akcija, ["dodaj", "skenslaj", "prihodnje", "prihodnjeParkirPlac", "skenslajAdmin"])) {
         echo json_encode(["info" => "Napacen endpoint"]);
         $ok = false;
     }
@@ -37,7 +37,9 @@ function filtriraj($metoda, $akcija, $zac, $kon, $parkingID, $registrska, $rezer
     if ($akcija == "skenslaj" && !isset($rezervacijaId)) {
         $ok = false;
     }
-
+    if ($akcija == "prihodnjeParkirPlac" && !isset($parkingID)) {
+        $ok = false;
+    }
     return $ok;
 }
 function dodaj($registerska, $uporabnikId, $zac, $kon, $parkingID)
@@ -73,6 +75,7 @@ function dodaj($registerska, $uporabnikId, $zac, $kon, $parkingID)
 }
 function skenslaj($rezervacijaId, $upodabnikId)
 {
+
     $sql = "DELETE FROM REZERVACIJA WHERE id = ? AND uporabnikID = ?";
 
     $povezava = Baza::poveziSe();
@@ -87,7 +90,26 @@ function skenslaj($rezervacijaId, $upodabnikId)
     }
 
 }
+function skenslajAdmin($rezervacijaId)
+{
+    if (!isset($_SESSION["role"]) || $_SESSION["role"] != "a") {
+        echo json_encode(["info" => "Nimaš pravic"]);
+        return;
+    }
+    $sql = "DELETE FROM REZERVACIJA WHERE id = ?";
 
+    $povezava = Baza::poveziSe();
+
+    $ps = $povezava->prepare($sql);
+    $ps->bind_param("i", $rezervacijaId);
+
+    if ($ps->execute() && $ps->affected_rows == 1) {
+        echo json_encode(["info" => "ok"]);
+    } else {
+        echo json_encode(["info" => "Rezervacije ni mogoče izbrisati"]);
+    }
+
+}
 function prihodnje($uporabnikID)
 {
     try {
@@ -96,6 +118,30 @@ function prihodnje($uporabnikID)
         $sql = "SELECT REZERVACIJA.id,zac,kon,parkingID,registrska FROM REZERVACIJA INNER JOIN AVTO ON AVTO.id = REZERVACIJA.avtoID WHERE zac > CURDATE() AND uporabnikID = ?";
         $ps = $povezava->prepare($sql);
         $ps->bind_param("i", $uporabnikID);
+        $ps->execute();
+        $r = $ps->get_result();
+        $out = ["info" => "ok", "rezervacije" => []];
+        while ($v = $r->fetch_assoc()) {
+            $out["rezervacije"][] = $v;
+        }
+        echo json_encode($out);
+    } catch (Exception $_) {
+        echo json_encode(["info" => "Napaka pri pridobivanju rezervacij"]);
+    }
+}
+function prihodnjeParkirPlac($parkingId)
+{
+    if (!isset($_SESSION["role"]) || $_SESSION["role"] != "a") {
+        echo json_encode(["info" => "Nimaš pravic"]);
+        return;
+
+    }
+    try {
+
+        $povezava = Baza::poveziSe();
+        $sql = "SELECT REZERVACIJA.id,zac,kon,parkingID,registrska,uporabnikID FROM REZERVACIJA INNER JOIN AVTO ON AVTO.id = REZERVACIJA.avtoID WHERE zac > NOW() AND parkingID = ?";
+        $ps = $povezava->prepare($sql);
+        $ps->bind_param("i", $parkingId);
         $ps->execute();
         $r = $ps->get_result();
         $out = ["info" => "ok", "rezervacije" => []];
@@ -128,6 +174,8 @@ function rezervacija($metoda, $akcija)
         "dodaj" => dodaj($registrska, $uporabnikId, $zac, $kon, $parkingID),
         "skenslaj" => skenslaj($rezervacijaId, $uporabnikId),
         "prihodnje" => prihodnje($uporabnikId),
+        "prihodnjeParkirPlac" => prihodnjeParkirPlac($parkingID),
+        "skenslajAdmin" => skenslajAdmin($rezervacijaId)
     };
 
 }

@@ -29,6 +29,7 @@ function prostost($metoda)
     if (!filtriraj($metoda)) {
         return;
     }
+
     $zac = $_POST["zac"];
     $kon = $_POST["kon"];
 
