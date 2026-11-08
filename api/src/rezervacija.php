@@ -42,6 +42,7 @@ function filtriraj($metoda, $akcija, $zac, $kon, $parkingID, $registrska, $rezer
 }
 function dodaj($registerska, $uporabnikId, $zac, $kon, $parkingID)
 {
+    $napaka = 'this is a duplicate';
 
     $povezava = Baza::poveziSe();
 
@@ -52,7 +53,7 @@ function dodaj($registerska, $uporabnikId, $zac, $kon, $parkingID)
     $r = $ps->get_result();
     $vr = $r->fetch_assoc()["st"];
     if ($vr === null || $vr != 0) {
-        echo json_encode(["info" => "Rezervacija ni možna"]);
+        echo json_encode(["info" => $napaka]);
         return;
     }
     try {
@@ -64,10 +65,10 @@ function dodaj($registerska, $uporabnikId, $zac, $kon, $parkingID)
         if ($ps->execute() && $ps->affected_rows === 1) {
             echo json_encode(["info" => "ok"]);
         } else {
-            echo json_encode(["info" => "Rezervacija ni možna"]);
+            echo json_encode(["info" => $napaka]);
         }
     } catch (Exception $_) {
-        echo json_encode(["info" => "Rezervacija ni možna"]);
+        echo json_encode(["info" => $napaka]);
     }
 }
 function skenslaj($rezervacijaId, $upodabnikId)
