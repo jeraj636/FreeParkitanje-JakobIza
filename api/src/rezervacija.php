@@ -45,31 +45,44 @@ function filtriraj($metoda, $akcija, $zac, $kon, $parkingID, $registrska, $rezer
 function dodaj($registerska, $uporabnikId, $zac, $kon, $parkingID)
 {
     $napaka = 'this is a duplicate';
-
     $povezava = Baza::poveziSe();
 
-    $sql = "SELECT COUNT(*) AS st FROM REZERVACIJA WHERE parkingID = ? AND zac < ? AND kon > ?";
-    $ps = $povezava->prepare($sql);
-    $ps->bind_param("iss", $parkingID, $kon, $zac);
-    $ps->execute();
-    $r = $ps->get_result();
-    $vr = $r->fetch_assoc()["st"];
-    if ($vr === null || $vr != 0) {
-        echo json_encode(["info" => $napaka]);
-        return;
-    }
-    try {
+    // Ensure MySQLi throws exceptions on errors
+    $povezava->begin_transaction();
 
-        $sql = "INSERT INTO REZERVACIJA(uporabnikID,zac,kon,parkingID,avtoID) SELECT ?,?,?,?, id FROM AVTO WHERE registrska = ? AND userId = ?";
+    try {
+        // 1. Check for overlapping reservations with row locking (FOR UPDATE)
+        $sql = "SELECT COUNT(*) AS st FROM REZERVACIJA WHERE parkingID = ? AND zac < ? AND kon > ? FOR UPDATE";
+        $ps = $povezava->prepare($sql);
+        $ps->bind_param("iss", $parkingID, $kon, $zac);
+        $ps->execute();
+        $r = $ps->get_result();
+        $vr = $r->fetch_assoc()["st"];
+
+        if ($vr !== null && $vr > 0) {
+            $povezava->rollback();
+            echo json_encode(["info" => $napaka]);
+            return;
+        }
+
+        // 2. Insert the reservation
+        $sql = "INSERT INTO REZERVACIJA (uporabnikID, zac, kon, parkingID, avtoID) SELECT ?, ?, ?, ?, id FROM AVTO WHERE registrska = ? AND userId = ?";
         $ps = $povezava->prepare($sql);
         $ps->bind_param("issisi", $uporabnikId, $zac, $kon, $parkingID, $registerska, $uporabnikId);
+        $ps->execute();
 
-        if ($ps->execute() && $ps->affected_rows === 1) {
+        if ($ps->affected_rows === 1) {
+            $povezava->commit();
             echo json_encode(["info" => "ok"]);
         } else {
-            echo json_encode(["info" => $napaka]);
+            // This happens if the car (registrska) doesn't belong to the user
+            $povezava->rollback();
+            echo json_encode(["info" => "Invalid car or unauthorized action."]);
         }
-    } catch (Exception $_) {
+
+    } catch (Exception $e) {
+        $povezava->rollback();
+        // Log $e->getMessage() internally if needed for debugging
         echo json_encode(["info" => $napaka]);
     }
 }
