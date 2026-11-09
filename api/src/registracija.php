@@ -64,8 +64,8 @@ function vnesiVBazo($upIme, $upGeslo)
 function registracija($metoda, $_)
 {
     $podatki = json_decode(file_get_contents("php://input"), true);
-    $upIme = $podatki["upIme"];
-    $upGeslo = $podatki["upGeslo"];
+    $upIme = $podatki["upIme"] ?? null;
+    $upGeslo = $podatki["upGeslo"] ?? null;
     if (!filtriraj($metoda, $upIme, $upGeslo)) {
         return;
     }

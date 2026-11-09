@@ -77,13 +77,13 @@ function
     $ps->execute();
     $r = $ps->get_result();
     if ($r->num_rows < 1) {
-        throw new PrijavaException("Uporabnik ne obstaja");
+        throw new PrijavaException("Napačno uporabniško ime ali geslo");
     } else {
         $bazaHash = $r->fetch_assoc()["geslo"];
         if (password_verify($upGeslo, $bazaHash)) {
             return true;
         } else {
-            throw new PrijavaException("Napacno Geslo");
+            throw new PrijavaException("Napačno uporabniško ime ali geslo");
         }
     }
 }

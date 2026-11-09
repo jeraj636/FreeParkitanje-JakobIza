@@ -154,7 +154,7 @@ Pravila:
 Vrni izključno JSON:
 {
     \"zac\": null,
-    \"kon\": null,
+    \"kon\": null
 }
 ";
         $podatki = [
@@ -179,7 +179,7 @@ Vrni izključno JSON:
                 "type" => "json_object"
             ]
         ];
-        $out = izlusciPodatke($besedilo, $podatki);
+        $out = izlusciPodatke($podatki);
         $out["info"] = "ok";
         echo json_encode($out);
     } catch (Exception $e) {
@@ -223,7 +223,7 @@ Pravila:
 
 Vrni izključno JSON:
 {
-    \"id\": null,
+    \"id\": null
 }
 ";
         $podatki = [
@@ -248,18 +248,22 @@ Vrni izključno JSON:
                 "type" => "json_object"
             ]
         ];
-        $out = izlusciPodatke($besedilo, $podatki);
+        $out = izlusciPodatke($podatki);
         $out["info"] = "ok";
+        if ($out["is"] != null) {
 
-        foreach ($out["id"] as $idRezervacije) {
-            $sql = "SELECT REZERVACIJA.id,zac,kon,parkingID FROM REZERVACIJA WHERE id = ? AND uporabnikID = ?";
-            $ps = $povezava->prepare($sql);
-            $ps->bind_param("ii", $idRezervacije, $id);
-            $ps->execute();
-            $r = $ps->get_result();
-            if ($r->num_rows == 1) {
-                $out["predlaganeZaIzbris"][] = $r->fetch_assoc();
+            foreach ($out["id"] as $idRezervacije) {
+                $sql = "SELECT REZERVACIJA.id,zac,kon,parkingID FROM REZERVACIJA WHERE id = ? AND uporabnikID = ?";
+                $ps = $povezava->prepare($sql);
+                $ps->bind_param("ii", $idRezervacije, $id);
+                $ps->execute();
+                $r = $ps->get_result();
+                if ($r->num_rows == 1) {
+                    $out["predlaganeZaIzbris"][] = $r->fetch_assoc();
+                }
             }
+        } else {
+            $out["predlaganeZaIzbris"] = null;
         }
 
         echo json_encode($out);

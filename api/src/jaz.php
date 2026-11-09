@@ -22,6 +22,7 @@ function jaz($metoda)
     }
     if (!ustvariSejo()) {
         echo json_encode(["info" => "seja potekla"]);
+        return;
     }
 
     // Brskanje po bazi

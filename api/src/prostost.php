@@ -28,8 +28,8 @@ function prostost($metoda)
 {
 
     $podatki = json_decode(file_get_contents("php://input"), true);
-    $zac = $podatki["zac"];
-    $kon = $podatki["kon"];
+    $zac = $podatki["zac"] ?? null;
+    $kon = $podatki["kon"] ?? null;
     if (!filtriraj($metoda, $kon, $zac)) {
         return;
     }

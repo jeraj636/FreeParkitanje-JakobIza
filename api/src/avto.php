@@ -3,7 +3,7 @@ namespace Avto;
 use Exception;
 use Baza;
 require_once __DIR__ . "/seje.php";
-function filtriraj($metoda, $akcija, $registerska)
+function filtriraj($metoda, $akcija, $registrska)
 {
     $ok = true;
     // Filtracija vhoda
@@ -15,20 +15,20 @@ function filtriraj($metoda, $akcija, $registerska)
         echo json_encode(["info" => "Napacen endpoint"]);
         $ok = false;
     }
-    if (!isset($registerska)) {
-        echo json_encode(["info" => "Napacna poizvedba specificiraj registerska"]);
+    if (!isset($registrska)) {
+        echo json_encode(["info" => "Napacna poizvedba specificiraj registrska"]);
         $ok = false;
     }
     return $ok;
 }
-function dodaj($registerska, $uporabnikId)
+function dodaj($registrska, $uporabnikId)
 {
     $sql = "INSERT INTO AVTO(userId,registrska) VALUES(?,?)";
 
     $povezava = Baza::poveziSe();
 
     $ps = $povezava->prepare($sql);
-    $ps->bind_param("is", $uporabnikId, $registerska);
+    $ps->bind_param("is", $uporabnikId, $registrska);
 
     if ($ps->execute()) {
         echo json_encode(["info" => "ok"]);
@@ -55,7 +55,7 @@ function skenslaj($registrska, $upodabnikId)
 function avto($metoda, $akcija)
 {
     $podatki = json_decode(file_get_contents("php://input"), true);
-    $registrska = $podatki["registerska"];
+    $registrska = $podatki["registrska"];
     if (!filtriraj($metoda, $akcija, $registrska)) {
         return;
     }
@@ -63,8 +63,6 @@ function avto($metoda, $akcija)
         echo json_encode(["info" => "seja potekla"]);
         return;
     }
-    $podatki = json_decode(file_get_contents("php://input"), true);
-    $registrska = $podatki["registerska"];
     $uporabnikId = $_SESSION["id"];
     match ($akcija) {
         "dodaj" => dodaj($registrska, $uporabnikId),
