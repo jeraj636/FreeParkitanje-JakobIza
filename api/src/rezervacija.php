@@ -155,20 +155,21 @@ function prihodnjeParkirPlac($parkingId)
 }
 function rezervacija($metoda, $akcija)
 {
-
-    if (!filtriraj($metoda, $akcija, $_POST["zac"] ?? null, $_POST["kon"] ?? null, $_POST["parkingID"] ?? null, $_POST["registrska"] ?? null, $_POST["rezervacijaId"] ?? null)) {
+    $podatki = json_decode(file_get_contents("php://input"), true);
+    $registrska = $podatki["registrska"] ?? null;
+    $zac = $podatki["zac"] ?? null;
+    $kon = $podatki["kon"] ?? null;
+    $parkingID = $podatki["parkingID"] ?? null;
+    $rezervacijaId = $podatki["rezervacijaId"] ?? null;
+    if (!filtriraj($metoda, $akcija, $zac, $kon, $parkingID, $registrska, $rezervacijaId)) {
         return;
     }
     if (!ustvariSejo()) {
         echo json_encode(["info" => "seja potekla"]);
         return;
     }
-    $registrska = $_POST["registrska"] ?? null;
     $uporabnikId = $_SESSION["id"] ?? null;
-    $zac = $_POST["zac"] ?? null;
-    $kon = $_POST["kon"] ?? null;
-    $parkingID = $_POST["parkingID"] ?? null;
-    $rezervacijaId = $_POST["rezervacijaId"] ?? null;
+
 
     match ($akcija) {
         "dodaj" => dodaj($registrska, $uporabnikId, $zac, $kon, $parkingID),

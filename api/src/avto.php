@@ -61,7 +61,8 @@ function avto($metoda, $akcija)
         echo json_encode(["info" => "seja potekla"]);
         return;
     }
-    $registrska = $_POST["registrska"];
+    $podatki = json_decode(file_get_contents("php://input"), true);
+    $registrska = $podatki["registrska"];
     $uporabnikId = $_SESSION["id"];
     match ($akcija) {
         "dodaj" => dodaj($registrska, $uporabnikId),

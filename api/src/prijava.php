@@ -10,7 +10,7 @@ class HudaException extends Exception
 {
 
 }
-function filtriraj($metoda)
+function filtriraj($metoda, $upIme, $upGeslo)
 {
     $ok = true;
     // Filtracija vhoda
@@ -18,11 +18,11 @@ function filtriraj($metoda)
         echo json_encode(["info" => "Napacna poizvedba uporabi POST"]);
         $ok = false;
     }
-    if (!isset($_POST["upIme"])) {
+    if ($upIme === null) {
         echo json_encode(["info" => "Napacna poizvedba specificiraj upIme"]);
         $ok = false;
     }
-    if (!isset($_POST["upGeslo"])) {
+    if ($upGeslo === null) {
         echo json_encode(["info" => "Napacna poizvedba specificiraj upGeslo"]);
         $ok = false;
     }
@@ -30,12 +30,14 @@ function filtriraj($metoda)
 }
 function prijava($metoda, $_)
 {
-    if (!filtriraj($metoda)) {
+    $podatki = json_decode(file_get_contents("php://input"), true);
+    $upIme = $podatki["upIme"] ?? null;
+    $upGeslo = $podatki["upGeslo"] ?? null;
+    if (!filtriraj($metoda, $upIme, $upGeslo)) {
         return;
     }
 
-    $upIme = $_POST["upIme"];
-    $upGeslo = $_POST["upGeslo"];
+
     $uspelaPrijava = false;
     try {
         $uspelaPrijava = preveriUporabnika($upIme, $upGeslo);

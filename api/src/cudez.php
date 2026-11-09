@@ -17,7 +17,7 @@ class CudezException extends Exception
 {
 
 }
-function filtriraj($metoda, $akcija)
+function filtriraj($metoda, $akcija, $podatki)
 {
     $ok = true;
     // Filtracija vhoda
@@ -29,7 +29,7 @@ function filtriraj($metoda, $akcija)
         echo json_encode(["info" => "Napacen endpoint"]);
         $ok = false;
     }
-    if (!isset($_POST["besedilo"])) {
+    if ($podatki === null) {
         echo json_encode(["info" => "Napacna poizvedba specificiraj besedilo"]);
 
         $ok = false;
@@ -40,7 +40,7 @@ function filtriraj($metoda, $akcija)
 
 
 
-function izlusciPodatke(string $besedilo, $podatki): array
+function izlusciPodatke($podatki): array
 {
     $apiKljuc = getenv("AI_API_KLJUC");
 
@@ -271,16 +271,17 @@ Vrni izključno JSON:
 function cudez($metoda, $akcija)
 {
 
-    if (!filtriraj($metoda, $akcija)) {
-        return;
-    }
     if (!ustvariSejo()) {
         echo json_encode(["info" => "seja potekla"]);
         return;
     }
     $id = $_SESSION["id"];
-    $besedilo = $_POST["besedilo"];
 
+    $podatki = json_decode(file_get_contents("php://input"), true);
+    $besedilo = $podatki["besedilo"] ?? null;
+    if (!filtriraj($metoda, $akcija, $podatki)) {
+        return;
+    }
     match ($akcija) {
         "poisciRezervacijo" => poisciRezervacijo($besedilo),
         "skenslajRezervacijo" => skenslajRezervacijo($id, $besedilo),

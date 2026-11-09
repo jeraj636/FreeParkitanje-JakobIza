@@ -2,7 +2,7 @@
 namespace Prostost;
 use Exception;
 use Baza;
-function filtriraj($metoda)
+function filtriraj($metoda, $kon, $zac)
 {
     $ok = true;
     // Filtracija vhoda
@@ -10,11 +10,11 @@ function filtriraj($metoda)
         echo json_encode(["info" => "Napacna poizvedba uporabi POST"]);
         $ok = false;
     }
-    if (!isset($_POST["zac"])) {
+    if ($zac === null) {
         echo json_encode(["info" => "Napacna poizvedba specificiraj zac"]);
         $ok = false;
     }
-    if (!isset($_POST["kon"])) {
+    if ($kon === null) {
         echo json_encode(["info" => "Napacna poizvedba specificiraj kon"]);
         $ok = false;
     }
@@ -26,13 +26,13 @@ function filtriraj($metoda)
 
 function prostost($metoda)
 {
-    if (!filtriraj($metoda)) {
+
+    $podatki = json_decode(file_get_contents("php://input"), true);
+    $zac = $podatki["zac"];
+    $kon = $podatki["kon"];
+    if (!filtriraj($metoda, $kon, $zac)) {
         return;
     }
-
-    $zac = $_POST["zac"];
-    $kon = $_POST["kon"];
-
     try {
         $povezava = Baza::poveziSe();
         $sql = "SELECT id FROM PARKING p WHERE NOT EXISTS (SELECT 1 FROM REZERVACIJA r WHERE p.id = r.parkingID AND zac < ? AND kon > ?)";
