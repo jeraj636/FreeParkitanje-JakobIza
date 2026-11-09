@@ -1,0 +1,12 @@
+{
+  "name": "jakob/api",
+  "authors": [
+    {
+      "name": "Your Name",
+      "email": "you@example.com"
+    }
+  ],
+  "require": {
+    "vlucas/phpdotenv": "^5.8"
+  }
+}

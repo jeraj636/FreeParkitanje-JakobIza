@@ -18,7 +18,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "npm --prefix web run dev",
+    "dev": "concurrently -k \"npm --prefix web run dev\" \"php -S localhost:8000 -t api\"",
     "build": "npm --prefix web run build"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6"
   }
 }

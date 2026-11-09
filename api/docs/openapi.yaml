@@ -1,0 +1,290 @@
+openapi: 3.0.3
+info:
+  title: freeparkiranje
+  description: API storitev za upravljanje in iskanje prostih parkirišč z integrirano AI obdelavo besedila.
+  version: 1.0.0
+servers:
+  - url: https://api.freeparkiranje.si/v1
+    description: Produkcijski strežnik
+paths:
+  /prijava:
+    post:
+      summary: Prijava uporabnika
+      description: Preveri uporabniško ime in geslo, ustvari sejo ter vrne status prijave.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - upIme
+                - upGeslo
+              properties:
+                upIme:
+                  type: string
+                  description: Uporabniško ime
+                upGeslo:
+                  type: string
+                  description: Uporabniško geslo
+      responses:
+        "200":
+          description: Uspešna prijava ali sporočilo o napaki
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "OK"
+
+  /registracija:
+    post:
+      summary: Registracija novega uporabnika
+      description: Preveri, ali uporabniško ime obstaja, zashira geslo in shrani novega uporabnika v bazo.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - upIme
+                - upGeslo
+              properties:
+                upIme:
+                  type: string
+                  description: Želeno uporabniško ime
+                upGeslo:
+                  type: string
+                  description: Uporabniško geslo
+      responses:
+        "200":
+          description: Uspešna registracija ali obvestilo, da je ime zasedeno
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+
+  /jaz:
+    post:
+      summary: Podatki o trenutnem uporabniku
+      description: Preveri veljavnost seje ter vrne podatke o prijavljenem uporabniku in njegovih registriranih avtomobilih.
+      responses:
+        "200":
+          description: Podatki o uporabniku ali obvestilo o potekli seji
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+                  role:
+                    type: string
+                    example: "u"
+                  ime:
+                    type: string
+                    example: "janez"
+                  avti:
+                    type: array
+                    items:
+                      type: string
+                    example: ["LJ123AB"]
+
+  /avto/{akcija}:
+    post:
+      summary: Upravljanje avtomobilov
+      description: Omogoča dodajanje ali brisanje (skenslaj) registrske tablice za prijavljenega uporabnika.
+      parameters:
+        - name: akcija
+          in: path
+          required: true
+          description: Izbira akcije (dodaj ali skenslaj)
+          schema:
+            type: string
+            enum:
+              - dodaj
+              - skenslaj
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - registrska
+              properties:
+                registrska:
+                  type: string
+                  description: Registrska tablica avtomobila
+      responses:
+        "200":
+          description: Uspešna izvedba ali obvestilo o napaki
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+
+  /rezervacija/{akcija}:
+    post:
+      summary: Upravljanje rezervacij
+      description: Omogoča dodajanje, brisanje in pregledovanje rezervacij (za uporabnike in administratorje).
+      parameters:
+        - name: akcija
+          in: path
+          required: true
+          description: Izbira akcije
+          schema:
+            type: string
+            enum:
+              - dodaj
+              - skenslaj
+              - prihodnje
+              - prihodnjeParkirPlac
+              - skenslajAdmin
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                zac:
+                  type: string
+                  format: date-time
+                  description: Začetek rezervacije
+                kon:
+                  type: string
+                  format: date-time
+                  description: Konec rezervacije
+                parkingID:
+                  type: integer
+                  description: ID parkirnega mesta
+                registrska:
+                  type: string
+                  description: Registrska tablica avtomobila
+                rezervacijaId:
+                  type: integer
+                  description: ID rezervacije (za brisanje)
+      responses:
+        "200":
+          description: Uspešna izvedba ali seznam rezervacij
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+                  rezervacije:
+                    type: array
+                    items:
+                      type: object
+
+  /prostost:
+    post:
+      summary: Iskanje prostih parkirišč
+      description: Vrne seznam ID-jev prostih parkirnih mest v izbranem časovnem obdobju.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - zac
+                - kon
+              properties:
+                zac:
+                  type: string
+                  format: date-time
+                  description: Začetek časovnega obdobja
+                kon:
+                  type: string
+                  format: date-time
+                  description: Konec časovnega obdobja
+      responses:
+        "200":
+          description: Seznam prostih parkirnih mest
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+                  parkirplaci:
+                    type: array
+                    items:
+                      type: integer
+                    example: [1, 3, 5]
+
+  /cudez/{akcija}:
+    post:
+      summary: AI obdelava besedila za rezervacije
+      description: Uporablja zunanji AI model za analizo naravnega jezika (besedila) v namene iskanja ali brisanja rezervacij.
+      parameters:
+        - name: akcija
+          in: path
+          required: true
+          description: Izbira AI akcije
+          schema:
+            type: string
+            enum:
+              - poisciRezervacijo
+              - skenslajRezervacijo
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - besedilo
+              properties:
+                besedilo:
+                  type: string
+                  description: Besedilo v naravnem jeziku z vsebino rezervacije ali zahtevo za preklic
+      responses:
+        "200":
+          description: Rezultat AI obdelave in podatki o najdenih/predlaganih rezervacijah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+                  zac:
+                    type: string
+                    description: Izluščen začetek rezervacije
+                  kon:
+                    type: string
+                    description: Izluščen konec rezervacije
+                  id:
+                    type: array
+                    items:
+                      type: integer
+                    description: Seznam ID-jev ustreznih rezervacij
+                  predlaganeZaIzbris:
+                    type: array
+                    items:
+                      type: object
+                    description: Seznam podatkov o rezervacijah, ki so predlagane za izbris
+
+components:
+  schemas: {}
