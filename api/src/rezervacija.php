@@ -11,7 +11,7 @@ function filtriraj($metoda, $akcija, $zac, $kon, $parkingID, $registrska, $rezer
         echo json_encode(["info" => "Napacna poizvedba uporabi POST"]);
         $ok = false;
     }
-    if (!isset($akcija) || !in_array($akcija, ["dodaj", "skenslaj", "prihodnje", "prihodnjeParkirPlac", "skenslajAdmin"])) {
+    if (!isset($akcija) || !in_array($akcija, ["dodaj", "skenslaj", "prihodnje", "prihodnjeAdmin", "skenslajAdmin"])) {
         echo json_encode(["info" => "Napacen endpoint"]);
         $ok = false;
     }
@@ -174,7 +174,7 @@ function rezervacija($metoda, $akcija)
         "dodaj" => dodaj($registrska, $uporabnikId, $zac, $kon, $parkingID),
         "skenslaj" => skenslaj($rezervacijaId, $uporabnikId),
         "prihodnje" => prihodnje($uporabnikId),
-        "prihodnjeParkirPlac" => prihodnjeParkirPlac($parkingID),
+        "prihodnjeAdmin" => prihodnjeParkirPlac($parkingID),
         "skenslajAdmin" => skenslajAdmin($rezervacijaId)
     };
 
