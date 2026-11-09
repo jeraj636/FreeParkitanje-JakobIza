@@ -54,7 +54,9 @@ function skenslaj($registrska, $upodabnikId)
 }
 function avto($metoda, $akcija)
 {
-    if (!filtriraj($metoda, $akcija, $_POST["registrska"])) {
+    $podatki = json_decode(file_get_contents("php://input"), true);
+    $registrska = $podatki["registerska"];
+    if (!filtriraj($metoda, $akcija, $registrska)) {
         return;
     }
     if (!ustvariSejo()) {
@@ -62,7 +64,7 @@ function avto($metoda, $akcija)
         return;
     }
     $podatki = json_decode(file_get_contents("php://input"), true);
-    $registrska = $podatki["registrska"];
+    $registrska = $podatki["registerska"];
     $uporabnikId = $_SESSION["id"];
     match ($akcija) {
         "dodaj" => dodaj($registrska, $uporabnikId),
