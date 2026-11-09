@@ -34,3 +34,20 @@ export async function posli<T extends Odgovor = Odgovor>(
     throw new Error('Strežnik je vrnil neveljaven odgovor')
   }
 }
+
+
+
+// Podatki prijavljenega uporabnika (odgovor na /jaz).
+export type Jaz = Odgovor & { role?: string; ime?: string; avti?: string[] }
+
+export function prijava(upIme: string, upGeslo: string) {
+  return posli('/prijava', { upIme, upGeslo })
+}
+
+export function registracija(upIme: string, upGeslo: string) {
+  return posli('/registracija', { upIme, upGeslo })
+}
+
+export function kdoSem() {
+  return posli<Jaz>('/jaz')
+}
