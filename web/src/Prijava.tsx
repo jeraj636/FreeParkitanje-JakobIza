@@ -4,6 +4,8 @@ import { prijava, registracija, kdoSem, uspelo } from './api'
 
 type Props = { priPrijavi: (ime: string) => void }
 
+const MIN_DOLZINA_GESLA = 8
+
 export default function Prijava({ priPrijavi }: Props) {
   const [upIme, setUpIme] = useState('')
   const [upGeslo, setUpGeslo] = useState('')
@@ -14,6 +16,14 @@ export default function Prijava({ priPrijavi }: Props) {
   async function oddaj(e: FormEvent) {
     e.preventDefault()
     setNapaka('')
+
+    // Dolžino gesla preverimo samo pri novem računu, da se lahko
+    // prijavijo tudi obstoječi uporabniki s starejšimi gesli.
+    if (novRacun && upGeslo.length < MIN_DOLZINA_GESLA) {
+      setNapaka(`Geslo mora imeti vsaj ${MIN_DOLZINA_GESLA} znakov.`)
+      return
+    }
+
     setNalaganje(true)
     try {
       if (novRacun) {
@@ -58,6 +68,11 @@ export default function Prijava({ priPrijavi }: Props) {
             onChange={(e) => setUpGeslo(e.target.value)}
             required
           />
+          {novRacun && (
+            <p className="text-sm opacity-70">
+              Geslo mora imeti vsaj {MIN_DOLZINA_GESLA} znakov.
+            </p>
+          )}
 
           {napaka && <div className="alert alert-error">{napaka}</div>}
 
@@ -69,7 +84,10 @@ export default function Prijava({ priPrijavi }: Props) {
           <button
             type="button"
             className="btn btn-ghost btn-sm"
-            onClick={() => setNovRacun(!novRacun)}
+            onClick={() => {
+              setNovRacun(!novRacun)
+              setNapaka('')
+            }}
           >
             {novRacun ? 'Že imam račun' : 'Nimam računa'}
           </button>

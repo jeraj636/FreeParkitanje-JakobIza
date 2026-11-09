@@ -35,7 +35,7 @@ export async function posli<T extends Odgovor = Odgovor>(
   }
 }
 
-
+// ---------- Uporabnik ----------
 
 // Podatki prijavljenega uporabnika (odgovor na /jaz).
 export type Jaz = Odgovor & { role?: string; ime?: string; avti?: string[] }
@@ -52,10 +52,49 @@ export function kdoSem() {
   return posli<Jaz>('/jaz')
 }
 
+// ---------- Avti ----------
+
 export function dodajAvto(registrska: string) {
   return posli('/avto/dodaj', { registrska })
 }
 
 export function izbrisiAvto(registrska: string) {
   return posli('/avto/skenslaj', { registrska })
+}
+
+// ---------- Parkirna mesta in rezervacije ----------
+
+// Eno parkirno mesto v mreži.
+export type Mesto = { id: number; x: number; y: number; smer: number }
+
+// Rezervacija, kot jo vrne API.
+export type Rezervacija = {
+  id: number
+  zac: string
+  kon: string
+  parkingID: number
+  registrska: string
+}
+
+export function vsaMesta() {
+  return posli<Odgovor & { parkirplaci: Mesto[] }>('/parkirplaci')
+}
+
+// Vrne samo številke (id) prostih mest v izbranem času.
+export function prostaMesta(zac: string, kon: string) {
+  return posli<Odgovor & { parkirplaci: number[] }>('/prostost', { zac, kon })
+}
+
+export function rezerviraj(zac: string, kon: string, parkingID: number, registrska: string) {
+  return posli('/rezervacija/dodaj', { zac, kon, parkingID, registrska })
+}
+
+// Moje prihodnje rezervacije.
+export function mojeRezervacije() {
+  return posli<Odgovor & { rezervacije: Rezervacija[] }>('/rezervacija/prihodnje')
+}
+
+// Prekliče (izbriše) rezervacijo s to številko.
+export function prekliciRezervacijo(rezervacijaId: number) {
+  return posli('/rezervacija/skenslaj', { rezervacijaId })
 }
