@@ -1,2 +1,26 @@
 @import "tailwindcss";
-@plugin "daisyui";
+
+/* Samo svetla tema (brez temnega načina), da je stran vedno bela. */
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+/* Prilagojena svetla tema: bela stran, rumeni gumbi. */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  color-scheme: light;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #ffffff;
+  --color-base-300: #e5e7eb;
+  --color-base-content: #1f2937;
+
+  --color-primary: #facc15;
+  --color-primary-content: #1f2937;
+}
+
+/* Tanek rob okoli kartic, da se na beli podlagi vidijo. */
+.card {
+  border: 1px solid var(--color-base-300);
+}

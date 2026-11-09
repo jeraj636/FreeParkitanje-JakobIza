@@ -38,6 +38,7 @@ export async function posli<T extends Odgovor = Odgovor>(
 // ---------- Uporabnik ----------
 
 // Podatki prijavljenega uporabnika (odgovor na /jaz).
+// role: "u" = uporabnik, "a" = administrator.
 export type Jaz = Odgovor & { role?: string; ime?: string; avti?: string[] }
 
 export function prijava(upIme: string, upGeslo: string) {
@@ -50,6 +51,11 @@ export function registracija(upIme: string, upGeslo: string) {
 
 export function kdoSem() {
   return posli<Jaz>('/jaz')
+}
+
+// Konča sejo na strežniku (če pot obstaja).
+export function odjava() {
+  return posli('/odjava')
 }
 
 // ---------- Avti ----------
@@ -97,4 +103,21 @@ export function mojeRezervacije() {
 // Prekliče (izbriše) rezervacijo s to številko.
 export function prekliciRezervacijo(rezervacijaId: number) {
   return posli('/rezervacija/skenslaj', { rezervacijaId })
+}
+
+// ---------- Administrator ----------
+
+// Pri adminu ima rezervacija še številko uporabnika, ki jo je naredil.
+export type RezervacijaAdmin = Rezervacija & { uporabnikID: number }
+
+// Prihodnje rezervacije izbranega mesta (samo za vlogo "a").
+export function rezervacijeMesta(parkingID: number) {
+  return posli<Odgovor & { rezervacije: RezervacijaAdmin[] }>('/rezervacija/prihodnjeAdmin', {
+    parkingID,
+  })
+}
+
+// Izbriše katerokoli rezervacijo (samo za vlogo "a").
+export function izbrisiRezervacijoAdmin(rezervacijaId: number) {
+  return posli('/rezervacija/skenslajAdmin', { rezervacijaId })
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { kdoSem, vsaMesta, prostaMesta, rezerviraj, uspelo } from './api'
 import type { Mesto } from './api'
+import Zemljevid from './Zemljevid'
 
 // Iz "2026-11-10T08:00" naredi "2026-11-10 08:00:00", kot ga razume baza.
 function zaBazo(v: string) {
@@ -138,17 +139,7 @@ export default function Rezerviraj({ priRezervaciji, osveziMesta }: Props) {
     }
   }
 
-  // Mesta razporedimo v mrežo po koordinatah x in y.
-  const maxX = Math.max(0, ...mesta.map((m) => m.x))
-  const maxY = Math.max(0, ...mesta.map((m) => m.y))
-  const poKljucu = new Map<string, Mesto>(mesta.map((m) => [`${m.x},${m.y}`, m]))
-  const celice: { x: number; y: number; mesto?: Mesto }[] = []
-  for (let y = 0; y <= maxY; y++) {
-    for (let x = 0; x <= maxX; x++) {
-      celice.push({ x, y, mesto: poKljucu.get(`${x},${y}`) })
-    }
-  }
-
+  // Barva mesta glede na stanje.
   function barva(m: Mesto) {
     if (prosta === null) return 'btn-outline'
     if (!prosta.has(m.id)) return 'btn-error'
@@ -224,27 +215,15 @@ export default function Rezerviraj({ priRezervaciji, osveziMesta }: Props) {
               <span className="badge badge-primary">izbrano</span>
             </div>
 
-            <div
-              className="grid gap-1"
-              style={{ gridTemplateColumns: `repeat(${maxX + 1}, minmax(0, 1fr))` }}
-            >
-              {celice.map(({ x, y, mesto }) =>
-                mesto ? (
-                  <button
-                    key={`${x},${y}`}
-                    title={`Mesto ${mesto.id}`}
-                    className={`btn btn-xs min-w-0 px-0 ${barva(mesto)}`}
-                    disabled={prosta === null || !prosta.has(mesto.id)}
-                    onClick={() => setIzbrano(mesto.id)}
-                  />
-                ) : (
-                  <div key={`${x},${y}`} />
-                ),
-              )}
-            </div>
+            <Zemljevid
+              mesta={mesta}
+              razred={barva}
+              onemogoceno={(m) => prosta === null || !prosta.has(m.id)}
+              priKliku={(m) => setIzbrano(m.id)}
+            />
 
             {izbrano !== null && (
-              <button className="btn btn-success" onClick={potrdi} disabled={!registrska}>
+              <button className="btn btn-primary" onClick={potrdi} disabled={!registrska}>
                 Rezerviraj mesto {izbrano}
               </button>
             )}
