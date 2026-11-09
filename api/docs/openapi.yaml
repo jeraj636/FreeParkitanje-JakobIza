@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: freeparkiranje
-  description: API storitev za upravljanje in iskanje prostih parkirišč.
+  description: API storitev za upravljanje in iskanje prostih parkirišč z integrirano AI obdelavo besedila.
   version: 1.0.0
 servers:
   - url: https://api.freeparkiranje.si/v1
@@ -231,6 +231,60 @@ paths:
                     items:
                       type: integer
                     example: [1, 3, 5]
+
+  /cudez/{akcija}:
+    post:
+      summary: AI obdelava besedila za rezervacije
+      description: Uporablja zunanji AI model za analizo naravnega jezika (besedila) v namene iskanja ali brisanja rezervacij.
+      parameters:
+        - name: akcija
+          in: path
+          required: true
+          description: Izbira AI akcije
+          schema:
+            type: string
+            enum:
+              - poisciRezervacijo
+              - skenslajRezervacijo
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - besedilo
+              properties:
+                besedilo:
+                  type: string
+                  description: Besedilo v naravnem jeziku z vsebino rezervacije ali zahtevo za preklic
+      responses:
+        "200":
+          description: Rezultat AI obdelave in podatki o najdenih/predlaganih rezervacijah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+                    example: "ok"
+                  zac:
+                    type: string
+                    description: Izluščen začetek rezervacije
+                  kon:
+                    type: string
+                    description: Izluščen konec rezervacije
+                  id:
+                    type: array
+                    items:
+                      type: integer
+                    description: Seznam ID-jev ustreznih rezervacij
+                  predlaganeZaIzbris:
+                    type: array
+                    items:
+                      type: object
+                    description: Seznam podatkov o rezervacijah, ki so predlagane za izbris
 
 components:
   schemas: {}
