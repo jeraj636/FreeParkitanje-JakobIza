@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Prijava from './Prijava'
+import Avti from './Avti'
 
 function App() {
   const [ime, setIme] = useState<string | null>(null)
@@ -9,11 +10,10 @@ function App() {
   }
 
   return (
-    <main className="min-h-screen grid place-items-center bg-base-200 p-6">
-      <div className="card bg-base-100 shadow-sm">
-        <div className="card-body">
-          <p>Prijava uspešna: <b>{ime}</b></p>
-        </div>
+    <main className="min-h-screen bg-base-200 p-6">
+      <div className="max-w-md mx-auto grid gap-4">
+        <p>Prijavljena: <b>{ime}</b></p>
+        <Avti />
       </div>
     </main>
   )

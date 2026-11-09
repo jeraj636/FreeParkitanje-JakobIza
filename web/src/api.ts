@@ -51,3 +51,11 @@ export function registracija(upIme: string, upGeslo: string) {
 export function kdoSem() {
   return posli<Jaz>('/jaz')
 }
+
+export function dodajAvto(registrska: string) {
+  return posli('/avto/dodaj', { registrska })
+}
+
+export function izbrisiAvto(registrska: string) {
+  return posli('/avto/skenslaj', { registrska })
+}
