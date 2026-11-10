@@ -6,9 +6,17 @@ import { resolve } from "node:path";
 
 export default defineConfig({
   plugins: [tailwindcss(), react()],
-  server: {
+    server: {
     port: 8080,
     strictPort: true,
+    proxy: {
+      // Klici na /api gredo na pravi strežnik. Brskalniku je videti,
+      // da vse prihaja z istega naslova, zato piškotek seje deluje.
+      "/api": {
+        target: "https://fp.kokosek.si",
+        changeOrigin: true,
+      },
+    },
   },
   base: "/",
   build: {
