@@ -6,8 +6,8 @@
 
 | Name     | GitHub    | Main responsibilities |
 | -------- | --------- | --------------------- |
-| Avtorica | @ilavtar  | …                     |
-| Avtor    | @jeraj636 | …                     |
+| Avtorica | @ilavtar  | frontend                     |
+| Avtor    | @jeraj636 | backend                    |
 
 <!-- Lab repository: one row. Project repository: both team members. -->
 
@@ -23,16 +23,26 @@
 ## Architecture
 
 See [docs/architecture.md](docs/architecture.md).
-
 ```mermaid
-flowchart LR
-    Web[Web app] --> API
-    Mobile[Mobile app] --> API
-    Agent[AI agent] --> API
-    API --> DB[(Database)]
-    API --> LLM[LLM provider]
-```
 
+flowchart LR
+    subgraph Clients["Odjemalci"]
+        Web["Web app<br/>TypeScript + DaisyUI"]
+        Mobile["Mobilna aplikacija"]
+    end
+
+    subgraph Backend["Strežnik"]
+        API["API<br/>PHP"]
+        DB[("MariaDB")]
+        AI["AI<br/>Claude"]
+    end
+
+    Web -->|HTTPS| API
+    Mobile -->|HTTPS| API
+    API --> DB
+    API --> AI
+
+```
 ## Stack
 
 | Part          | Technology |
@@ -71,8 +81,7 @@ Describe which environment variables / user secrets are needed and how to set th
 
 ### Mobile app
 
-How to build and run it, and how to point it to a local or production API.
-
+Mobilna aplikacija bi bila uporabna, ker uporabniki pogosto iščejo parkirno mesto med vožnjo ali tik pred prihodom na cilj. Omogočala bi hitro iskanje prostih parkirnih mest v bližini trenutne lokacije ali izbrane destinacije, pregled njihove razpoložljivosti in cen ter rezervacijo parkirnega mesta neposredno prek telefona. Uporabniki bi lahko dostopali do svojih rezervacij, prejemali obvestila o potrditvah in spremembah ter lažje našli rezervirano parkirno mesto s pomočjo zemljevida in navigacije. Mobilna aplikacija bi tako izboljšala dostopnost sistema, poenostavila postopek rezervacije in uporabnikom prihranila čas pri iskanju parkirišča.
 ## Documentation
 
 | Document                                       | Content                       |

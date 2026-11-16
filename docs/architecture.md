@@ -4,28 +4,22 @@
 
 ```mermaid
 flowchart LR
-    subgraph Clients
-        Web[Web app]
-        Mobile[Mobile app]
-        AgentUI[Agent chat / MCP client]
+    subgraph Clients["Odjemalci"]
+        Web["Web app<br/>TypeScript + DaisyUI"]
+        Mobile["Mobilna aplikacija"]
     end
-    subgraph Cloud
-        API[REST API]
-        Agent[Agent]
-        DB[(Managed database)]
+
+    subgraph Backend["Strežnik"]
+        API["API<br/>PHP"]
+        DB[("MariaDB")]
+        AI["AI<br/>Claude"]
     end
-    LLM[LLM provider]
 
     Web -->|HTTPS| API
-    Mobile -->|HTTPS + bearer token| API
-    AgentUI --> Agent
-    Agent -->|tools, user's token| API
-    Agent --> LLM
+    Mobile -->|HTTPS| API
     API --> DB
-    API --> LLM
+    API --> AI
 ```
-
-Update this diagram as the system evolves.
 
 ## Layers (backend)
 <!-- Presentation → business logic → data access. Name the main projects/modules. -->
