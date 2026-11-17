@@ -9,12 +9,15 @@ require_once __DIR__ . "/rezervacija.php";
 require_once __DIR__ . "/prostost.php";
 require_once __DIR__ . "/cudez.php";
 require_once __DIR__ . "/parkirplaci.php";
-
+require_once __DIR__ . "/prijavaAndroid.php";
+require_once __DIR__ . "/prijavaZtoken.php";
 function obdelajZahtevo($metoda, $vir, $id)
 {
     Baza::init();
     $dovoljeneFunkcije = [
         "prijava" => "Prijava\\prijava",
+        "prijavaAndroid" => "PrijavaAndroid\\prijava",
+        "prijavaToken" => "PrijavaZToken\\prijava",
         "registracija" => "Registracija\\registracija",
         "jaz" => "Jaz\\jaz",
         "avto" => "Avto\\avto",
