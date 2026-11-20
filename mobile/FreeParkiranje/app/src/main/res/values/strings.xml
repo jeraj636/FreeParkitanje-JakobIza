@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">FreeParkiranje</string>
+    <string name="avto">avto</string>
+    <string name="Parkirisce">Parkirišče</string>
+    <string name="Rezervacije">Monitor slicica</string>
+    <string name="kos">Koš</string>
+    <string name="pog">Pogovor</string>
+    <string name="koledar">Koledar</string>
+    <string name="puscica">Puscica</string>
+
+
+
+</resources>
