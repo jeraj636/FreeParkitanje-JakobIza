@@ -191,6 +191,7 @@ fun ParkirPlac(
 @Composable
 fun VsebinaRPM() {
     Vsebina {
+        
         var mojiAvti by remember { mutableStateOf(emptyList<String>()) }
         var nalagam by remember { mutableStateOf(true) }
         val coroutineScope = rememberCoroutineScope()
