@@ -3,6 +3,8 @@ package com.example.freeparkiranje.ui.components.GlavnaFunkcionalnost.vsebina
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,7 +15,7 @@ fun Vsebina(vsebina: @Composable (() -> Unit)) {
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp).verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         vsebina()
